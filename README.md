@@ -56,7 +56,7 @@ This project aims to:
 ---
 
 🔄 System Architecture
-
+```mermaid
 flowchart LR
 
 A[User] --> B[Frontend UI\nHTML CSS JS]
@@ -86,7 +86,7 @@ end
 N --> H
 O --> F
 P --> E
-
+```
 ---
 
 🚀 How It Works
