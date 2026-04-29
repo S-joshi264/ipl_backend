@@ -4,8 +4,23 @@ from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import os
 import joblib
-
+from datetime import datetime
 BASE_DIR = os.path.dirname(__file__)
+LOG_DIR=os.getcwd()
+def log_pred(input_data,prediction):
+    os.makedirs(os.path.join(LOG_DIR,"logs") ,exist_ok=True)
+
+    log_path=os.path.join(LOG_DIR,"logs","pred_logs.csv")
+    log_data=pd.DataFrame([{
+        "Time Stamp":datetime.now(),
+        "input_data":input_data,
+        "prediction":prediction
+
+    }])
+    if(os.path.exists(log_path)):
+        log_data.to_csv(log_path,header=False,index=False,mode="a")
+    else:
+        log_data.to_csv(log_path,index=False)
 
 model = joblib.load(os.path.join(BASE_DIR, "model_pipe.pkl"))
 ss = joblib.load(os.path.join(BASE_DIR, "scaler.pkl"))
@@ -37,8 +52,7 @@ def Prediction(data:Features):
        'playing_role_Bowler', 'playing_role_Wicketkeeper-Batsman'])
         print(df)
         df_scaled = ss.transform(df)
-        print(df_scaled)
-
+        log_pred(data,pred(df_scaled))
         return {"Prediction":pred(df_scaled)}
     except Exception as e:
         raise HTTPException (status_code=404,detail=str(e))
