@@ -12,9 +12,10 @@ BASE_DIR = os.path.dirname(__file__)
 LOG_DIR=os.getcwd()
 logger = logging.getLogger("app")
 logger.setLevel(logging.INFO)
+logger.handlers.clear()
 
 handler = LogtailHandler(
-    source_token=os.getenv(LOG_TOKEN)
+    source_token="7Q6jyhbjjEvMzBLN1MAFUxqg"
 )
 
 logger.addHandler(handler)
