@@ -6,7 +6,6 @@ from logtail import LogtailHandler
 import pandas as pd
 import os
 import joblib
-from datetime import datetime
 app=FastAPI()
 LOG_TOKEN="7Q6jyhbjjEvMzBLN1MAFUxqg"
 BASE_DIR = os.path.dirname(__file__)

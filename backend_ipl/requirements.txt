@@ -4,4 +4,5 @@ pandas==2.3.3
 joblib==1.4.2
 scikit-learn==1.7.2
 numpy
-datetime
+logging
+logtail
