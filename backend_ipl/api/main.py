@@ -70,5 +70,9 @@ def Prediction(data:Features):
         return {"Prediction":pred(df_scaled)}
     except Exception as e:
         raise HTTPException (status_code=404,detail=str(e))
+@app.get("/test-log")
+def test_log():
+    logger.info("TEST LOG FROM API HIT")
+    return {"status": "log sent"}
 
 
