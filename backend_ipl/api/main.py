@@ -1,31 +1,42 @@
 from fastapi import FastAPI, Request, HTTPException, Path
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+import logging
+from logtail import LogtailHandler
 import pandas as pd
 import os
 import joblib
 from datetime import datetime
+app=FastAPI()
+LOG_TOKEN="7Q6jyhbjjEvMzBLN1MAFUxqg"
 BASE_DIR = os.path.dirname(__file__)
 LOG_DIR=os.getcwd()
-def log_pred(input_data,prediction):
-    os.makedirs(os.path.join(LOG_DIR,"logs") ,exist_ok=True)
+logger = logging.getLogger("app")
+logger.setLevel(logging.INFO)
 
-    log_path=os.path.join(LOG_DIR,"logs","pred_logs.csv")
-    log_data=pd.DataFrame([{
-        "Time Stamp":datetime.now(),
-        "input_data":input_data,
-        "prediction":prediction
+handler = LogtailHandler(
+    source_token=os.getenv(LOG_TOKEN)
+)
 
-    }])
-    if(os.path.exists(log_path)):
-        log_data.to_csv(log_path,header=False,index=False,mode="a")
-    else:
-        log_data.to_csv(log_path,index=False)
+logger.addHandler(handler)
+# def log_pred(input_data,prediction):
+#     os.makedirs(os.path.join(LOG_DIR,"logs") ,exist_ok=True)
+
+#     log_path=os.path.join(LOG_DIR,"logs","pred_logs.csv")
+#     log_data=pd.DataFrame([{
+#         "Time Stamp":datetime.now(),
+#         "input_data":input_data,
+#         "prediction":prediction
+
+#     }])
+    # if(os.path.exists(log_path)):
+    #     log_data.to_csv(log_path,header=False,index=False,mode="a")
+    # else:
+    #     log_data.to_csv(log_path,index=False)
 
 model = joblib.load(os.path.join(BASE_DIR, "model_pipe.pkl"))
 ss = joblib.load(os.path.join(BASE_DIR, "scaler.pkl"))
 
-app=FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -52,7 +63,11 @@ def Prediction(data:Features):
        'playing_role_Bowler', 'playing_role_Wicketkeeper-Batsman'])
         print(df)
         df_scaled = ss.transform(df)
-        log_pred(data,pred(df_scaled))
+        logger.info({
+            "event": "prediction",
+            "input": data,
+            "prediction": pred(df_scaled)
+        })
         return {"Prediction":pred(df_scaled)}
     except Exception as e:
         raise HTTPException (status_code=404,detail=str(e))
