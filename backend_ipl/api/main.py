@@ -27,6 +27,8 @@ logger.addHandler(handler)
 #         "Time Stamp":datetime.now(),
 #         "input_data":input_data,
 #         "prediction":prediction
+\
+
 
 #     }])
     # if(os.path.exists(log_path)):
